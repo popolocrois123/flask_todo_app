@@ -1,6 +1,30 @@
 from flask import Flask, render_template, request, redirect, url_for
+from flask_wtf import FlaskForm
+from wtforms import ValidationError, StringField, PasswordField, SubmitField, TextAreaField, BooleanField
+
 
 app = Flask(__name__, template_folder="templates")
+
+# フォームを利用する際に必要。セキュリティ対策に必要。
+app.config['SECRET_KEY'] = 'mysecretkey'
+
+
+"""
+継承元のFlaskFormクラスの機能を使えるようになる。
+各フィールドを定義する。ここで定義したフィールドを基にHTMLに配置する。
+"""
+class Todo_Registration(FlaskForm):
+    # todoリストの項目入力フィールド
+    todo = StringField()
+    # todoリストの内容入力フィールド
+    todo_detale = TextAreaField()
+    # チェックボックスフィールド
+    check_box = BooleanField()
+    # 送信ボタンフィールド
+    submit = SubmitField()
+
+
+
 
 # 空のtodoリスト
 # 宿題：detaleの欄を追加　
