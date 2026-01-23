@@ -2,11 +2,19 @@ from flask import Flask, render_template, request, redirect, url_for
 from flask_wtf import FlaskForm
 from wtforms import ValidationError, StringField, PasswordField, SubmitField, TextAreaField, BooleanField
 from wtforms.validators import DataRequired
+from loguru import logger
 
 app = Flask(__name__, template_folder="templates")
 
 # フォームを利用する際に必要。セキュリティ対策に必要
 app.config['SECRET_KEY'] = 'mysecretkey'
+
+
+# logを追加
+logger.remove()
+# ログファイル
+logger.add("log_state.log", level="INFO", encoding="utf-8")
+
 
 
 """
@@ -43,15 +51,19 @@ def add():
         todo = form.todo.data
         todo_detale = form.todo_detale.data
         if todo:  # 空でないときだけ追加
-            if  not todo_detale:
-                todos.append({"task": todo, "detale": None, "done": False})
-            else:
-                todos.append({"task": todo, "detale": todo_detale, "done": False})
+                todos.append({"task": todo, "detale": todo_detale if todo_detale else None, "done": False})
+                logger.info(f"todosの追加: {todos}")
+            # if  not todo_detale:
+            #     todos.append({"task": todo, "detale": None, "done": False})
+            # else:
+            #     todos.append({"task": todo, "detale": todo_detale, "done": False})
+            # if todo_detale:
+            #     todos[todo]["detale"] = todo_detale
 
     return render_template("index.html", form=form, todos=todos)
 
 # 宿題：detaleを追加
-@app.route("/see_todo", methods=["POST"])
+@app.route("/see_todo", methods=["GET"])
 def see_todo():
     return render_template("see_todo.html", todos=todos)
 
