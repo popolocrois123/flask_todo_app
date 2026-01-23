@@ -7,28 +7,15 @@
 </head>
 <body>
     <h1>Hello World!</h1>
-    <!-- <ul>
-        {% for todo in todos %}
-            <li>
-                <input type="checkbox" name="done" {% if todo['done'] %} checked {%endif%} onchange="this.form.submit()">
-                <span {%if todo['done'] %} style="text-decoration: line-through" {%endif%}>{{ todo['task'] }}</span>
-                <a href="{{ url_for('edit', index=loop.index0) }}">Edit</a>
-                <a href="{{ url_for('delete', index=loop.index0) }}">Delete</a>
-            </li>
-        {% endfor %}
-    </ul> -->
-    <form action="{{ url_for('add') }}" method="post">
-        <li>
-            <h4>TODO：</h4>
-            <input type="text" name="todo">
-        </li>
-        <li>
-            <h4>詳細：</h4>
-            <input type="text" name="todo_detale">
-        </li>
-        <li>
-            <button type="submit">Add Todo</button>
-        </li>
+
+
+    <form method="POST" action="{{ url_for('add') }}">
+        {{ form.hidden_tag() }} <!-- CSRFトークン -->
+        {{ form.todo.label }}: {{ form.todo()}}<br>
+        {{ form.todo_detale.label}}: {{ form.todo_detale() }}<br>
+        {{ form.check_box() }} チェック済みにする<br>
+        {{ form.submit() }}
     </form>
+
 </body>
 </html>
