@@ -67,6 +67,17 @@ def add():
 def see_todo():
     return render_template("see_todo.html", todos=todos)
 
+
+@app.route("/submit", methods=["POST"])
+def submit():
+    if request.method == "POST":
+        username = request.form["username"]
+        detail = request.form["detail"]
+        print(username)
+        print(detail)
+    return [username, detail], 200
+    # return render_template(".html", todos=todos)
+
 # def add_detale():
 #     todo_detale = request.form.get("todo_detale")
 #     todo_index = int(request.form.get("todo_index"))
