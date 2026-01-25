@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuralNine Todo App</title>
+</head>
+<body>
+    <h1>Hello World!</h1>
+
+
+    <form method="POST" action="{{ url_for('add') }}">
+        {{ form.hidden_tag() }} <!-- CSRFトークン -->
+        {{ form.todo.label }}: {{ form.todo()}}<br>
+        {{ form.todo_detale.label}}: {{ form.todo_detale() }}<br>
+        {{ form.check_box() }} チェック済みにする<br>
+        {{ form.submit() }}
+    </form>
+
+</body>
+</html>
