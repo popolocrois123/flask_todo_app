@@ -18,7 +18,7 @@ logger.add("log_state.log", level="INFO", encoding="utf-8")
 
 
 """
-継承元のFlaskFormクラスの機能を使えるようになる。
+[WTF]継承元のFlaskFormクラスの機能を使えるようになる。
 各フィールドを定義する。ここで定義したフィールドを基にHTMLに配置する。
 """
 class Todo_Form(FlaskForm):
@@ -38,6 +38,7 @@ todos = [{"task": "Sample_todo", "detale": None, "done": False}]
 
 @app.route("/")
 def index():
+    # [WTF]POSTデータを自動ｄフォームに紐付け
     form = Todo_Form()
     return render_template("index.html", todos=todos, form=form)
 
@@ -45,7 +46,7 @@ def index():
 @app.route("/add", methods=["POST"])
 def add():
     form = Todo_Form()
-    
+    # [WTF]POSTかどうか自動で判別
     if form.validate_on_submit():
         # todo, todo_detaleはこの下に書く
         todo = form.todo.data
