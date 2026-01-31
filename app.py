@@ -3,9 +3,13 @@ from flask_wtf import FlaskForm
 from wtforms import ValidationError, StringField, PasswordField, SubmitField, TextAreaField, BooleanField
 from wtforms.validators import DataRequired
 from loguru import logger
+# 宿題
+from flask_bootstrap import Bootstrap
 
 app = Flask(__name__, template_folder="templates")
 
+# 宿題
+Bootstrap(app)
 # フォームを利用する際に必要。セキュリティ対策に必要
 app.config['SECRET_KEY'] = 'mysecretkey'
 
@@ -36,10 +40,17 @@ class Todo_Form(FlaskForm):
 # 宿題：detaleの欄を追加　
 todos = [{"task": "Sample_todo", "detale": None, "done": False}]
 
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def index():
-    # [WTF]POSTデータを自動ｄフォームに紐付け
+    # # [WTF]POSTデータを自動ｄフォームに紐付け
+    # form = Todo_Form()
+    # return render_template("index.html", todos=todos, form=form)
+
+
+    # 宿題
     form = Todo_Form()
+    if form.validate_on_submit():
+        return render_template("see_todo.html", form=form)
     return render_template("index.html", todos=todos, form=form)
 
 
@@ -62,6 +73,11 @@ def add():
             #     todos[todo]["detale"] = todo_detale
 
     return render_template("index.html", form=form, todos=todos)
+
+    
+
+
+
 
 # 宿題：detaleを追加
 @app.route("/see_todo", methods=["GET"])
