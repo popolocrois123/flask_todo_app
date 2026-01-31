@@ -50,29 +50,35 @@ def index():
     # 宿題
     form = Todo_Form()
     if form.validate_on_submit():
-        return render_template("see_todo.html", form=form)
-    return render_template("index.html", todos=todos, form=form)
-
-
-@app.route("/add", methods=["POST"])
-def add():
-    form = Todo_Form()
-    # [WTF]POSTかどうか自動で判別
-    if form.validate_on_submit():
-        # todo, todo_detaleはこの下に書く
         todo = form.todo.data
         todo_detale = form.todo_detale.data
         if todo:  # 空でないときだけ追加
                 todos.append({"task": todo, "detale": todo_detale if todo_detale else None, "done": False})
                 logger.info(f"todosの追加: {todos}")
             # if  not todo_detale:
-            #     todos.append({"task": todo, "detale": None, "done": False})
-            # else:
-            #     todos.append({"task": todo, "detale": todo_detale, "done": False})
-            # if todo_detale:
-            #     todos[todo]["detale"] = todo_detale
+        return render_template("see_todo.html", todos=todos, form=form)
+    return render_template("index.html", todos=todos, form=form)
 
-    return render_template("index.html", form=form, todos=todos)
+
+# @app.route("/add", methods=["POST"])
+# def add():
+#     form = Todo_Form()
+#     # [WTF]POSTかどうか自動で判別
+#     if form.validate_on_submit():
+#         # todo, todo_detaleはこの下に書く
+#         todo = form.todo.data
+#         todo_detale = form.todo_detale.data
+#         if todo:  # 空でないときだけ追加
+#                 todos.append({"task": todo, "detale": todo_detale if todo_detale else None, "done": False})
+#                 logger.info(f"todosの追加: {todos}")
+#             # if  not todo_detale:
+#             #     todos.append({"task": todo, "detale": None, "done": False})
+#             # else:
+#             #     todos.append({"task": todo, "detale": todo_detale, "done": False})
+#             # if todo_detale:
+#             #     todos[todo]["detale"] = todo_detale
+
+#     return render_template("index.html", form=form, todos=todos)
 
     
 
@@ -85,15 +91,15 @@ def see_todo():
     return render_template("see_todo.html", todos=todos)
 
 
-@app.route("/submit", methods=["POST"])
-def submit():
-    if request.method == "POST":
-        username = request.form["username"]
-        detail = request.form["detail"]
-        print(username)
-        print(detail)
-    return [username, detail], 200
-    # return render_template(".html", todos=todos)
+# @app.route("/submit", methods=["POST"])
+# def submit():
+#     if request.method == "POST":
+#         username = request.form["username"]
+#         detail = request.form["detail"]
+#         print(username)
+#         print(detail)
+#     return [username, detail], 200
+#     # return render_template(".html", todos=todos)
 
 # def add_detale():
 #     todo_detale = request.form.get("todo_detale")
