@@ -1,0 +1,21 @@
+<!-- [Bootstrap]で新しく追加した所 -->
+<!-- {% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf%} -->
+
+<!-- [Bootstrap]タイトル -->
+{% block title %}
+<title>Todo Form</title>
+{% endblock %}
+
+<!-- 変更後 -->
+{% block content %}
+<div class="container">
+    <form method="POST" action="/">
+        <dl>
+            {{ wtf.quick_form(form) }}
+            <!-- <input class="btn btn-primary" type="submit" value="登録"> -->
+        </dl>
+    </form>
+</div>
+{% endblock %}
+
