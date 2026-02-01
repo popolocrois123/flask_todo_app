@@ -5,11 +5,12 @@ from wtforms.validators import DataRequired
 from loguru import logger
 # 宿題
 from flask_bootstrap import Bootstrap
+# 自作クラス
+from form_list import Todo_Form
 
 app = Flask(__name__, template_folder="templates")
 
-# 宿題
-Bootstrap(app)
+
 # フォームを利用する際に必要。セキュリティ対策に必要
 app.config['SECRET_KEY'] = 'mysecretkey'
 
@@ -19,21 +20,6 @@ logger.remove()
 # ログファイル
 logger.add("log_state.log", level="INFO", encoding="utf-8")
 
-
-
-"""
-[WTF]継承元のFlaskFormクラスの機能を使えるようになる。
-各フィールドを定義する。ここで定義したフィールドを基にHTMLに配置する。
-"""
-class Todo_Form(FlaskForm):
-    # todoリストの項目入力フィールド
-    todo = StringField("Todo", validators=[DataRequired()])
-    # todoリストの内容入力フィールド
-    todo_detale = StringField("詳細")
-    # チェックボックスフィールド
-    check_box = BooleanField()
-    # 送信ボタンフィールド
-    submit = SubmitField("送信")
 
 
 # 空のtodoリスト
@@ -57,7 +43,7 @@ def index():
                 logger.info(f"todosの追加: {todos}")
             # if  not todo_detale:
         return render_template("see_todo.html", todos=todos, form=form)
-    return render_template("index.html", todos=todos, form=form)
+    return render_template("index.html",  form=form)
 
 
 # @app.route("/add", methods=["POST"])
