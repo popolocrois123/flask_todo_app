@@ -35,12 +35,16 @@ def index():
 
     # 宿題
     form = Todo_Form()
+    # POSTか同化の確認とセキュリティ
     if form.validate_on_submit():
+        print("test")
+        # form の中のtodoからデータを入手
         todo = form.todo.data
-        todo_detale = form.todo_detale.data
+        print(f"{form}")
+        todo_detail = form.todo_detail.data
         if todo:  # 空でないときだけ追加
-                todos.append({"task": todo, "detale": todo_detale if todo_detale else None, "done": False})
-                logger.info(f"todosの追加: {todos}")
+            todos.append({"task": todo, "detail": todo_detail if todo_detail else None, "done": False})
+            logger.info(f"todosの追加: {todos}")
             # if  not todo_detale:
         return render_template("see_todo.html", todos=todos, form=form)
     return render_template("index.html",  form=form)
@@ -71,10 +75,10 @@ def index():
 
 
 
-# 宿題：detaleを追加
-@app.route("/see_todo", methods=["GET"])
-def see_todo():
-    return render_template("see_todo.html", todos=todos)
+# # 宿題：detaleを追加
+# @app.route("/see_todo", methods=["GET"])
+# def see_todo():
+#     return render_template("see_todo.html", todos=todos)
 
 
 # @app.route("/submit", methods=["POST"])
