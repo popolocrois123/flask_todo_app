@@ -21,14 +21,12 @@
    <form method="POST" action="/">
       {{ form.hidden_tag() }}
       <div class="mb-3">
-        {{ form.todo.label() }}
-        {{ form.todo() }}
-
-        {{ form.todo_detail.label() }}
-        {{ form.todo_detail() }}
-
-        {{ form.submit() }}
-    </div>
+        <label class="form-label">{{ form.todo.label }}</label>
+        <input type="text" class="form-control" placeholder="タスク" name='{{ form.todo() }}'>
+        <label class="form-label">{{ form.todo_detail.label }}</label>
+        <textarea class="form-control" id="exampleFormControlTextarea1" rows="5" name='{{ form.todo_detail()}}'></textarea>
+        <button type="submit" class="btn btn-primary">登録</button>
+      </div>
     </form>
   </div>
 
