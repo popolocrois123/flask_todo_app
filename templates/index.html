@@ -19,15 +19,13 @@
 
 
    <form method="POST" action="/">
-        <dl>
-            <div class="mb-3">
-            <label class="form-label">{{ form.todo.label }}</label>
-            <input type="text" class="form-control" placeholder="タスク" name='{{ form.todo() }}'>
-            </div>
-
-            <!-- <input class="btn btn-primary" type="submit" value="登録"> -->
-        </dl>
-        
+        <div class="mb-3">
+        <label class="form-label">{{ form.todo.label }}</label>
+        <input type="text" class="form-control" placeholder="タスク" name='{{ form.todo() }}'>
+        <label class="form-label">{{ form.todo_detail.label }}</label>
+        <textarea class="form-control" id="exampleFormControlTextarea1" rows="5" name='{{ form.todo_detail()}}'></textarea>
+        <button type="submit" class="btn btn-primary">登録</button>
+      </div>
     </form>
   </div>
 
