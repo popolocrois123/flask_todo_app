@@ -9,5 +9,5 @@ class Todo_Form(FlaskForm):
     todo_detail = StringField("詳細")
     # チェックボックスフィールド
     check_box = BooleanField()
-    # 送信ボタンフィールド
-    submit = SubmitField("送信")
+    # 登録ボタンフィールド
+    submit = SubmitField("登録")
