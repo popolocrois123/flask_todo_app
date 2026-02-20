@@ -22,10 +22,13 @@
       {{ form.hidden_tag() }}
       <div class="mb-3">
         {{ form.todo.label() }}
-        {{ form.todo() }}
+        {{ form.todo() }} <br>
 
-        {{ form.todo_detail.label() }}
-        {{ form.todo_detail() }}
+        {{ form.todo_detail.label() }} 
+        {{ form.todo_detail() }} <br>
+        
+        {{ form.limit_date.label() }}
+        {{ form.limit_date(class="date_pick", required=False) }}<br>
 
         {{ form.submit() }}
     </div>

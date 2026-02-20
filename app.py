@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_wtf import FlaskForm
-from wtforms import ValidationError, StringField, PasswordField, SubmitField, TextAreaField, BooleanField
+from wtforms import DateField, ValidationError, StringField, PasswordField, SubmitField, TextAreaField, BooleanField
 from wtforms.validators import DataRequired
 from loguru import logger
 # 宿題
@@ -14,17 +14,21 @@ app = Flask(__name__, template_folder="templates")
 # フォームを利用する際に必要。セキュリティ対策に必要
 app.config['SECRET_KEY'] = 'mysecretkey'
 
-
+# ----------------------------
+# logの設定
+# ----------------------------
 # logを追加
 logger.remove()
 # ログファイル
 logger.add("log_state.log", level="INFO", encoding="utf-8")
 
-
+# ----------------------------
+# メイン処理
+# ----------------------------
 
 # 空のtodoリスト
-# 宿題：detaleの欄を追加　
-todos = [{"task": "Sample_todo", "detale": None, "done": False}]
+# detaleの欄を追加　
+todos = [{"task": "Sample_todo", "detail": None, "done": False, "limit": None}]
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -32,21 +36,23 @@ def index():
     # form = Todo_Form()
     # return render_template("index.html", todos=todos, form=form)
 
-
-    # 宿題
     form = Todo_Form()
     # POSTか同化の確認とセキュリティ
     if form.validate_on_submit():
-        print("test")
+        # print("test")
         # form の中のtodoからデータを入手
         todo = form.todo.data
-        print(f"{form}")
+        # print(f"{form}")
         todo_detail = form.todo_detail.data
+        limit_date = form.limit_date.data
         if todo:  # 空でないときだけ追加
-            todos.append({"task": todo, "detail": todo_detail if todo_detail else None, "done": False})
+            todos.append({"task": todo, "detail": todo_detail if todo_detail else None, 
+                        "done": False, "limit": limit_date if limit_date else None})
             logger.info(f"todosの追加: {todos}")
             # if  not todo_detale:
         return render_template("see_todo.html", todos=todos, form=form)
+    else:
+        print(form.errors)
     return render_template("index.html",  form=form)
 
 

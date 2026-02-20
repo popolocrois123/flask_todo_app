@@ -8,10 +8,10 @@
 <body>
     <h1>Todo一覧</h1>
     <ul>
-        {% for todo in todos %}
+        {% for todo in todos[1:] %}
         <li>
             タスク: {{ todo.task }} <br>
-            詳細: {{ todo.detale }}
+            詳細: {{ todo.detail}} <br>
         </li>
         {% endfor %}
     </ul>
