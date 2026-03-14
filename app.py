@@ -40,9 +40,9 @@ class TODO_DB(Base):
     __tablename__ = "todo"
     id: Mapped[int] = mapped_column(primary_key=True)  # 自動採番
     task: Mapped[str] = mapped_column(String) 
-    detail: Mapped[str] = mapped_column(String)
+    detail: Mapped[str] = mapped_column(String, nullable=True)
     done: Mapped[str] = mapped_column(Boolean)
-    limit: Mapped[datetime.date] = mapped_column(Date)
+    limit: Mapped[datetime.date] = mapped_column(Date, nullable=True)
 
 # DB接続とセッション作成
 engine = create_engine("sqlite:///todo.db")
@@ -138,9 +138,11 @@ def index():
 
 
 # # 宿題：detaleを追加
-# @app.route("/see_todo", methods=["GET"])
-# def see_todo():
-#     return render_template("see_todo.html", todos=todos)
+@app.route("/see_todo", methods=["GET"])
+def see_todo():
+    if form.validate_on_submit():
+        print("やっほー")
+    return render_template("see_todo.html", todos=todos)
 
 
 # @app.route("/submit", methods=["POST"])

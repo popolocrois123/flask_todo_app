@@ -14,3 +14,5 @@ class Todo_Form(FlaskForm):
     # 期限の日付選択フィールド
     limit_date = DateField("期限日付を入力：", format="%Y-%m-%d"
                             ,validators=[Optional()])
+    # 編集ボタンフィールド
+    edit = SubmitField("編集")

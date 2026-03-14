@@ -7,15 +7,28 @@
 </head>
 <body>
     <h1>Todo一覧</h1>
-    <ul>
-        {% for todo in todos[1:] %}
-        <li>
-            タスク: {{ todo.task }} <br>
-            詳細: {{ todo.detail}} <br>
-            期限： {{ todo.limit }} <br>
-        </li>
-        {% endfor %}
-    </ul>
+    <div class="container mt-5">
+        <form method="POST" action="/">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            <ul>
+                {% for todo in todos[1:] %}
+                <li>
+                    タスク: {{ todo.task }} <br>
+                    {% if todo.detail is not none %}
+                        詳細: {{ todo.detail}} <br>
+                    {% endif %}
+                    {% if todo.detail is not none %}
+                        期限： {{ todo.limit }} <br>
+                    {% endif %}
+                    
+                    {{ form.edit(class="btn btn-primary") }} 
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        </form>
+    </div>
     
 </body>
 </html>
