@@ -31,11 +31,17 @@ logger.add("log_state.log", level="INFO", encoding="utf-8")
 # SQLAlchemyのデータベースの設定
 # ----------------------------
 
-# ベースクラス
+# --- ベースクラス ---
 class Base(DeclarativeBase):
     pass
 
-# モデル定義
+# --- モデル定義 ---
+# TODO_DB: todoテーブル に対応。
+# id 主キー、連番自動採番。
+# task: タスク名。
+# detail: 詳細（任意）。
+# done: 完了状態（True/False）。
+# limit: 期限日（任意）。
 class TODO_DB(Base):
     __tablename__ = "todo"
     id: Mapped[int] = mapped_column(primary_key=True)  # 自動採番
@@ -63,54 +69,30 @@ todos = []
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    # # [WTF]POSTデータを自動ｄフォームに紐付け
-    # form = Todo_Form()
-    # return render_template("index.html", todos=todos, form=form)
-
     form = Todo_Form()
     # POSTか同化の確認とセキュリティ
     if form.validate_on_submit():
-        # print("test")
-        # form の中のtodoからデータを入手
-        todo = form.todo.data
-        # print(f"{form}")
-        todo_detail = form.todo_detail.data
-        limit_date = form.limit_date.data
-        if todo:  # 空でないときだけ追加
-            # 追加するtodoの辞書
-            todo_add_dict = {"task": todo, 
-                        "detail": todo_detail if todo_detail else None, 
-                        "done": False, 
-                        "limit": limit_date if limit_date else None}
-            todos.append(todo_add_dict)
-            logger.info(f"todosの追加: {todos}")
+        new_todo = TODO_DB(
+            task=form.todo.data,
+            detail=form.todo_detail.data,
+            done=False,
+            limit=form.limit_date.data
+        )
+        # データベースへの追加
+        session.add(new_todo)
+        session.commit()
 
-
-            # 宿題
-            # データベースへの追加
-            for t in todo_add_dict:
-                print(f"{todo_add_dict[t]}: {type(todo_add_dict[t])}")
-            session.add(TODO_DB(**todo_add_dict))
-            session.commit()
-
-            
-
-            # if  not todo_detale:
-        # データベースからデータの呼び出し
-        all_data = session.query(TODO_DB).all()
-        for task_data in all_data:
-            todos.append({"id": task_data.id,
-                            "task": task_data.task,
-                            "detail": task_data.detail,
-                            "done": task_data.done,
-                            "limit": task_data.limit})
-        return render_template("see_todo.html", todos=todos, form=form)
-    else:
-        print(form.errors)
-    return render_template("index.html",  form=form)
+        return redirect(url_for("see_todo"))
+    # todos = session.query(TODO_DB).all()
+    return render_template("index.html", form=form)
 
 
 
+# 宿題：detaleを追加
+@app.route("/test", methods=["GET"])
+def see_todo():
+    todos = session.query(TODO_DB).all()
+    return render_template("see_todo.html", todos=todos)
 
 # @app.route("/add", methods=["POST"])
 # def add():
@@ -137,12 +119,6 @@ def index():
 
 
 
-# # 宿題：detaleを追加
-@app.route("/see_todo", methods=["GET"])
-def see_todo():
-    if form.validate_on_submit():
-        print("やっほー")
-    return render_template("see_todo.html", todos=todos)
 
 
 # @app.route("/submit", methods=["POST"])

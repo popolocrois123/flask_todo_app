@@ -3,31 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <title>Todoリストの確認</title>
 </head>
-<body>
+<body class="p-3 mb-2 bg-danger-subtle text-danger-emphasis">
     <h1>Todo一覧</h1>
     <div class="container mt-5">
-        <form method="POST" action="/">
-        {{ form.hidden_tag() }}
         <div class="mb-3">
-            <ul>
-                {% for todo in todos[1:] %}
-                <li>
-                    タスク: {{ todo.task }} <br>
-                    {% if todo.detail is not none %}
-                        詳細: {{ todo.detail}} <br>
-                    {% endif %}
-                    {% if todo.detail is not none %}
-                        期限： {{ todo.limit }} <br>
-                    {% endif %}
-                    
-                    {{ form.edit(class="btn btn-primary") }} 
-                </li>
-                {% endfor %}
-            </ul>
+                <table class="table table-bordered border border-info">
+                    <thead class="table-info">
+                        <tr>
+                            <th scope="col">タスク</th>
+                            <th scope="col">詳細</th>
+                            <th scope="col">期限</th>
+                            <th scope="col">完了</th>
+                            <th scope="col">編集</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for todo in todos[1:] %}
+                            <tr>
+                                <td>{{ todo.task }}</td>
+                                <td>{{ todo.detail or "" }}</td>
+                                <td>{{ todo.limit or "" }}</td>
+                                <td>完了</td>
+                                <td>編集</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
         </div>
-        </form>
     </div>
     
 </body>
