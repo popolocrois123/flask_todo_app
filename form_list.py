@@ -1,6 +1,26 @@
 from flask_wtf import FlaskForm
-from wtforms import DateField, ValidationError, StringField, PasswordField, SubmitField, TextAreaField, BooleanField
+from wtforms import DateField, ValidationError, StringField, PasswordField, SubmitField, TextAreaField, BooleanField, RadioField
 from wtforms.validators import DataRequired, Optional
+import enum
+
+# --------------------------------
+# ---- State定義 
+# --------------------------------
+# TODO: タスクが未着手の状態
+# DOING: タスクが進行中の状態
+# DONE: タスクが完了した状態
+class State(enum.Enum):
+    TODO = "TODO"
+    DOING = "DOING"
+    DONE = "DONE"
+    @property
+    def label(self):
+        return {
+            "TODO": "未着手",
+            "DOING": "作業中",
+            "DONE": "完了"
+        }[self.value]
+
 
 # --------------------------------
 # --- Flaskフォーム（WTF）
@@ -21,3 +41,9 @@ class Todo_Form(FlaskForm):
                             ,validators=[Optional()])
     # 編集ボタンフィールド
     edit = SubmitField("編集")
+    # 進行チェックボックスフィールド
+    select_state = RadioField(
+        "状態",
+        choices=[(s.name, s.label) for s in State], default="TODO"
+    )
+
