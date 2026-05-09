@@ -7,27 +7,40 @@
     <title>Todoリストの確認</title>
 </head>
 <body class="p-3 mb-2 bg-danger-subtle text-danger-emphasis">
+
     <h1>Todo一覧</h1>
     <div class="container mt-5">
         <div class="mb-3">
                 <table class="table table-bordered border border-info">
+                    {{ form.hidden_tag() }}
                     <thead class="table-info">
                         <tr>
+                            <th scope="col">チェックリスト</th>
                             <th scope="col">タスク</th>
                             <th scope="col">詳細</th>
                             <th scope="col">期限</th>
-                            <th scope="col">完了</th>
+                            <th scope="col">進行状況</th>
                             <th scope="col">編集</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for todo in todos[1:] %}
                             <tr>
+                                <td>
+                                    {% for subfield in form.select_state %}
+                                    <div>
+                                        {{ subfield() }} {{ subfield.label }}
+                                    </div>
+                                    {% endfor %}
+                                </td>
                                 <td>{{ todo.task }}</td>
                                 <td>{{ todo.detail or "" }}</td>
                                 <td>{{ todo.limit or "" }}</td>
-                                <td>完了</td>
-                                <td>編集</td>
+                                <td>{{ todo.state.label }}</td>
+                                <td>
+                                    <a href="{{ url_for('edit_todo', id=todo.id) }}">編集</a>
+                                </td>
+                                
                             </tr>
                         {% endfor %}
                     </tbody>
