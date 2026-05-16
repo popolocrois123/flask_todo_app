@@ -1,11 +1,30 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import (
+    Flask, 
+    render_template, 
+    request,
+    session, 
+    redirect, 
+    url_for
+    )
 from flask_wtf import FlaskForm
-from wtforms import DateField, ValidationError, StringField, PasswordField, SubmitField, TextAreaField, BooleanField
+from wtforms import (
+    DateField, 
+    ValidationError, 
+    StringField, 
+    PasswordField, 
+    SubmitField, 
+    TextAreaField, 
+    BooleanField
+    )
 from wtforms.validators import DataRequired
 from loguru import logger
 from flask_bootstrap import Bootstrap
 # 自作クラス
-from form_list import Todo_Form, State
+from form_list import (
+    Todo_Form, 
+    State, 
+    Todo_info
+    )
 # SQLAlchemy
 from sqlalchemy import Boolean, Date, String, Integer, create_engine, Enum
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
@@ -89,26 +108,30 @@ def index(id=None):
     form = Todo_Form()
     # POSTか同化の確認とセキュリティ
     if form.validate_on_submit():
-        if id:
-                # データベースから該当のタスクを取得
-                todo = session.get(TODO_DB, id)
-                # タスクの内容を更新
-                todo.task = form.todo.data
-                todo.detail = form.todo_detail.data
-                todo.limit = form.limit_date.data
-                todo.state = State.TODO  # 編集したタスクはTODO状態にリセット
 
-        else:
-            new_todo = TODO_DB(
-                task=form.todo.data,
-                detail=form.todo_detail.data,
-                done=False,
-                state=State.TODO,  # 新規タスクはTODO状態
-                limit=form.limit_date.data,
-            )
-            # データベースへの追加
-            session.add(new_todo)
-        session.commit()
+        # if id:
+        #         # データベースから該当のタスクを取得
+        #         todo = session.get(TODO_DB, id)
+        #         # タスクの内容を更新
+        #         todo.task = form.todo.data
+        #         todo.detail = form.todo_detail.data
+        #         todo.limit = form.limit_date.data
+        #         todo.state = State.TODO  # 編集したタスクはTODO状態にリセット
+        #         print(f"上書き保存check")
+
+        # else:
+        #     new_todo = TODO_DB(
+        #         task=form.todo.data,
+        #         detail=form.todo_detail.data,
+        #         done=False,
+        #         state=State.TODO,  # 新規タスクはTODO状態
+        #         limit=form.limit_date.data,
+        #     )
+        #     # データベースへの追加
+        #     session.add(new_todo)
+        #     print(f"新規登録check")
+        # session.commit()
+        Todo_info.add_todo(request, session)
 
         return redirect(url_for("see_todo"))
     # todos = session.query(TODO_DB).all()
@@ -120,15 +143,16 @@ def index(id=None):
 def see_todo():
     form = Todo_Form()
     todos = session.query(TODO_DB).all()
-    return render_template("see_todo.html", form=form, todos=todos)
+    return render_template("see_todo.html", form=form, todos=todos, State=State)
 
 
 @app.route("/edit/<int:id>", methods=["GET"])
 def edit_todo(id):
     form = Todo_Form()
-    todos = session.query(TODO_DB).all()
+    # todos = session.query(TODO_DB).all()
     # フォームの値をデータベースの値で表示
     todo = session.get(TODO_DB, id)
+    form.todo.id = id
     form.todo.data = todo.task
     form.todo_detail.data = todo.detail
     form.limit_date.data = todo.limit
