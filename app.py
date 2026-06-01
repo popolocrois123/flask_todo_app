@@ -23,7 +23,8 @@ from flask_bootstrap import Bootstrap
 from form_list import (
     Todo_Form, 
     State, 
-    Todo_info
+    Todo_info,
+    db
     )
 # SQLAlchemy
 from sqlalchemy import Boolean, Date, String, Integer, create_engine, Enum
@@ -43,16 +44,22 @@ app.config['SECRET_KEY'] = 'mysecretkey'
 # logを追加
 logger.remove()
 # ログファイル
-logger.add("log_state.log", level="INFO", encoding="utf-8")
+logger.add("log_state.log", level="DEBUG", 
+            filter=lambda record: record["level"].name in ["INFO", "DEBUG"],
+            encoding="utf-8")
 
 
 # ----------------------------
-# SQLAlchemyのデータベースの設定
+# Flask-SQLAlchemyのデータベースの設定
 # ----------------------------
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///todo.db"
+db.init_app(app)
+with app.app_context():
+    db.create_all()
 
 # --- ベースクラス ---
-class Base(DeclarativeBase):
-    pass
+# class Base(DeclarativeBase):
+#     pass
 
 # # --- State定義 ---
 # # TODO: タスクが未着手の状態
@@ -77,22 +84,21 @@ class Base(DeclarativeBase):
 # detail: 詳細（任意）。
 # done: 完了状態（True/False）。
 # limit: 期限日（任意）。
-class TODO_DB(Base):
-    __tablename__ = "todo"
-    id: Mapped[int] = mapped_column(primary_key=True)  # 自動採番
-    task: Mapped[str] = mapped_column(String) 
-    detail: Mapped[str] = mapped_column(String, nullable=True)
-    done: Mapped[str] = mapped_column(Boolean)
-    limit: Mapped[datetime.date] = mapped_column(Date, nullable=True)
-    state: Mapped[State] = mapped_column(Enum(State), default=State.TODO)  # デフォルトはTODO
+# class TODO_DB(Base):
+#     __tablename__ = "todo"
+#     id: Mapped[int] = mapped_column(primary_key=True)  # 自動採番
+#     task: Mapped[str] = mapped_column(String) 
+#     detail: Mapped[str] = mapped_column(String, nullable=True)
+#     done: Mapped[str] = mapped_column(Boolean)
+#     limit: Mapped[datetime.date] = mapped_column(Date, nullable=True)
+#     state: Mapped[State] = mapped_column(Enum(State), default=State.TODO)  # デフォルトはTODO
 
 # DB接続とセッション作成
-engine = create_engine("sqlite:///todo.db")
-Session = sessionmaker(bind=engine)
-session = Session()
+# engine = create_engine("sqlite:///todo.db")
+# Session = sessionmaker(bind=engine)
+# session = Session()
 
-# テーブル作成
-Base.metadata.create_all(engine)
+
 
 # ----------------------------
 # メイン処理
@@ -103,61 +109,86 @@ Base.metadata.create_all(engine)
 # todos = [{"task": "Sample_todo", "detail": None, "done": False, "limit": None}]
 todos = []
 
-@app.route("/", methods=["GET", "POST"])
-def index(id=None):
+@app.route("/regist", methods=["GET", "POST"])
+def regist():
     form = Todo_Form()
+    
     # POSTか同化の確認とセキュリティ
     if form.validate_on_submit():
+        # print("validate通過")
+        # Todo_info.add_todo(request, session)
 
-        # if id:
-        #         # データベースから該当のタスクを取得
-        #         todo = session.get(TODO_DB, id)
-        #         # タスクの内容を更新
-        #         todo.task = form.todo.data
-        #         todo.detail = form.todo_detail.data
-        #         todo.limit = form.limit_date.data
-        #         todo.state = State.TODO  # 編集したタスクはTODO状態にリセット
-        #         print(f"上書き保存check")
+        return redirect(url_for("index"))
 
-        # else:
-        #     new_todo = TODO_DB(
-        #         task=form.todo.data,
-        #         detail=form.todo_detail.data,
-        #         done=False,
-        #         state=State.TODO,  # 新規タスクはTODO状態
-        #         limit=form.limit_date.data,
-        #     )
-        #     # データベースへの追加
-        #     session.add(new_todo)
-        #     print(f"新規登録check")
-        # session.commit()
-        Todo_info.add_todo(request, session)
+    else:
+        print("新規登録画面に移行")
 
-        return redirect(url_for("see_todo"))
-    # todos = session.query(TODO_DB).all()
-    return render_template("index.html", form=form)
+    return render_template("regist.html", form=form)
 
 
+@app.route("/", methods=["GET", "POST"])
+def index():
+    form = Todo_Form()
+    todos = Todo_info.query.all()
+    return render_template("index.html", form=form, todos=todos, State=State)
 
-@app.route("/test", methods=["GET"])
+
+@app.route("/todo_main", methods=["GET", "POST"])
 def see_todo():
     form = Todo_Form()
-    todos = session.query(TODO_DB).all()
-    return render_template("see_todo.html", form=form, todos=todos, State=State)
+    todos = Todo_info.query.all()
+
+    if form.validate_on_submit():
+        Todo_info.add_todo(request, session)
+        return redirect(url_for("see_todo"))
+
+    return render_template("index.html", form=form, todos=todos, State=State)
 
 
-@app.route("/edit/<int:id>", methods=["GET"])
+    # print("see_todo開始")
+    # todo_id = request.args.get("id")
+    
+    # form = Todo_Form()
+    # todos = session.query(TODO_DB).all()
+    
+    # print("args id:", request.args.get("id"))
+    # print("form id:", request.form.get("id"))
+    # if not todo_id:
+    #     # 新規登録の処理
+    #     # POSTか同化の確認とセキュリティ
+    #     if form.validate_on_submit():
+    #         Todo_info.add_todo(request, session)
+            
+
+    #         return redirect(url_for("see_todo"))
+    #     else:
+    #         logger.info(f"{request.method} /todo_main 登録してメインページに移動")
+    #         # logger.debug(f"method={request.method}")
+    #         # logger.debug(f"form={request.form}")
+    #         # logger.debug(f"errors={form.errors}")
+
+    # else:
+    #     # 上書き
+    #     if form.validate_on_submit():
+    #         Todo_info.add_todo(request, session)
+    #         return redirect(url_for("see_todo"))
+    # return render_template("index.html", form=form, todos=todos, State=State)
+
+@app.route("/edit/<int:id>", methods=["GET", "POST"])
 def edit_todo(id):
+    print(f"id:{id}")
     form = Todo_Form()
     # todos = session.query(TODO_DB).all()
     # フォームの値をデータベースの値で表示
-    todo = session.get(TODO_DB, id)
+    todo = Todo_info.query.get(id)
     form.todo.id = id
     form.todo.data = todo.task
     form.todo_detail.data = todo.detail
     form.limit_date.data = todo.limit
 
-    return render_template("index.html", form=form, id=id)
+    logger.info(f"{request.method} /edit 編集画面")
+
+    return render_template("regist.html", form=form, id=id)
 
 
 
@@ -179,4 +210,4 @@ def complete_todo(id):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5001)
+    app.run(debug=True, port=5002)

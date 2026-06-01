@@ -1,8 +1,17 @@
 from flask_wtf import FlaskForm
-from wtforms import DateField, ValidationError, StringField, PasswordField, SubmitField, TextAreaField, BooleanField, RadioField
+from wtforms import (
+    DateField, 
+    ValidationError, 
+    StringField, 
+    PasswordField, 
+    SubmitField, 
+    TextAreaField, 
+    BooleanField, 
+    RadioField)
 from wtforms.validators import DataRequired, Optional
 import enum
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 
 
@@ -70,24 +79,32 @@ class Todo_info(db.Model):
     # 追加、削除、編集の為のデコレーター
     @classmethod
     def add_todo(cls, request, session):
+        print("addtodoの呼び出し")
+        limit_str = request.form.get("limit_date")
+        if limit_str:
+            limit_date = datetime.strptime(limit_str, "%Y-%m-%d").date()
+        else:
+            limit_date = None
+            print(None)
+
         if request.form.get("id"):
             # データベースから該当のタスクを取得
-            todo = cls.query.get(request.form.get("id"))
+            todo = cls.query.get(int(request.form.get("id")))
             # タスクの内容を更新
             todo.task = request.form.get("todo")
             todo.detail = request.form.get("todo_detail")
-            todo.limit = request.form.get("limit_date")
+            todo.limit = limit_date
             todo.state = State(request.form.get("select_state"))
             print(f"上書き保存check")
         else:
             new_todo = cls(
                 task=request.form.get("todo"),
                 detail=request.form.get("todo_detail", None),
-                done=request.form.get("check_box") == "y",
-                limit=request.form.get("limit_date", None),
-                state=State(request.form.get("select_state", "TODO"))
+                done = False,
+                limit=limit_date,
+                state="TODO"
             )
-            print("★中身の確認:", request.form.get("id"))
+            # print("★中身の確認:", request.form.get("id"))
             print(f"新規登録check")
             session.add(new_todo)
         session.commit()
