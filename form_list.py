@@ -85,7 +85,7 @@ class Todo_info(db.Model):
             limit_date = datetime.strptime(limit_str, "%Y-%m-%d").date()
         else:
             limit_date = None
-            print(None)
+            print(f"limit_date: {limit_date}")
 
         if request.form.get("id"):
             # データベースから該当のタスクを取得
@@ -97,15 +97,23 @@ class Todo_info(db.Model):
             todo.state = State(request.form.get("select_state"))
             print(f"上書き保存check")
         else:
+            # new_todo = cls(
+            #     task=request.form.get("todo"),
+            #     detail=request.form.get("todo_detail", None),
+            #     done = False,
+            #     limit=limit_date,
+            #     state=State("TODO")
+            # )
             new_todo = cls(
-                task=request.form.get("todo"),
-                detail=request.form.get("todo_detail", None),
+                task = form.todo.data,
+                detail = form.todo_detail.data,
                 done = False,
-                limit=limit_date,
-                state="TODO"
+                limit = limit_date,
+                state = State("TODO")
             )
             # print("★中身の確認:", request.form.get("id"))
             print(f"新規登録check")
-            session.add(new_todo)
-        session.commit()
+            db.session.add(new_todo)
+
+        db.session.commit()
         
