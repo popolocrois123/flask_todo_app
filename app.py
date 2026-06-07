@@ -31,6 +31,7 @@ from sqlalchemy import Boolean, Date, String, Integer, create_engine, Enum
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
 import datetime
 import enum
+import os
 
 app = Flask(__name__, template_folder="templates")
 
@@ -52,7 +53,12 @@ logger.add("log_state.log", level="DEBUG",
 # ----------------------------
 # Flask-SQLAlchemyのデータベースの設定
 # ----------------------------
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///todo.db"
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+app.config["SQLALCHEMY_DATABASE_URI"] = (
+    f"sqlite:///{os.path.join(basedir, 'todo.db')}"
+)
+# app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///todo.db"
 db.init_app(app)
 with app.app_context():
     db.create_all()
@@ -111,6 +117,8 @@ def index():
 
     # データ取得
     todos = Todo_info.query.all()
+    # print(todos) # ← 取得したデータを確認
+    # print(db.engine.url)
     return render_template("index.html", form=form, todos=todos, State=State)
 
 
