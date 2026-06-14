@@ -29,6 +29,7 @@ from form_list import (
 # SQLAlchemy
 from sqlalchemy import Boolean, Date, String, Integer, create_engine, Enum
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
+from flask_sqlalchemy import SQLAlchemy
 import datetime
 import enum
 import os
@@ -58,6 +59,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 app.config["SQLALCHEMY_DATABASE_URI"] = (
     f"sqlite:///{os.path.join(basedir, 'todo.db')}"
 )
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///todo.db"
 db.init_app(app)
 with app.app_context():
