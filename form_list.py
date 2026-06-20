@@ -86,16 +86,19 @@ class Todo_info(db.Model):
         else:
             limit_date = None
             print(f"limit_date: {limit_date}")
-
+        # 編集
         if request.form.get("id"):
+            todo_id = int(request.form.get("id"))
             # データベースから該当のタスクを取得
-            todo = cls.query.get(int(request.form.get("id")))
+            todo = cls.query.get(todo_id)
             # タスクの内容を更新
             todo.task = request.form.get("todo")
             todo.detail = request.form.get("todo_detail")
             todo.limit = limit_date
-            todo.state = State(request.form.get("select_state"))
+            todo.state = State(request.form.get(f"select_state_{todo_id}"))  if None else "TODO"
             print(f"上書き保存check")
+            print(f"state確認:{todo.state}")
+        # 新規作成
         else:
             # new_todo = cls(
             #     task=request.form.get("todo"),
@@ -105,8 +108,8 @@ class Todo_info(db.Model):
             #     state=State("TODO")
             # )
             new_todo = cls(
-                task = form.todo.data,
-                detail = form.todo_detail.data,
+                task = request.form.get("todo"),
+                detail = request.form.get("todo_detail"),
                 done = False,
                 limit = limit_date,
                 state = State("TODO")

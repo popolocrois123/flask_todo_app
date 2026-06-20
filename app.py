@@ -149,6 +149,8 @@ def edit_todo(id):
     form.todo_detail.data = todo.detail
     form.limit_date.data = todo.limit
 
+
+
     logger.info(f"{request.method} /edit 編集画面")
 
     return render_template("regist.html", form=form, id=id)
@@ -170,4 +172,4 @@ def complete_todo(id):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5002)
+    app.run(debug=True, port=5006)
