@@ -20,7 +20,7 @@
 
    <form method="POST" action="/todo_main">
       {{ form.hidden_tag() }}
-      <input type="hidden" name="id" value="{{ id }}">
+      <input type="hidden" name="id" value="{{ form.todo.id }}">
       <div class="card text-center">
         <div class="card-header  text-bg-info text-white fw-bold">
           イベント作成
@@ -36,7 +36,21 @@
             {{ form.limit_date.label() }}
             {{ form.limit_date(class="date_pick", required=False) }}<br>
 
-            <!-- {{ form.submit(class="btn btn-primary") }} -->
+            {% if not form.todo.done %}
+                <input type="radio" name="radio" id="r1" checked="checked" value="0">
+                <label for="r1">未完了</label>
+                <input type="radio" name="radio" id="r1" value="1">
+                <label for="r1">完了</label>
+            {% else %}
+                <input type="radio" name="radio" id="r1" value="0">
+                <label for="r1">未完了</label>
+                <input type="radio" name="radio" id="r1" checked="checked" value="1">
+                <label for="r1">完了</label>
+            {% endif %}
+
+            
+            <br>
+                        <!-- {{ form.submit(class="btn btn-primary") }} -->
             <button type="submit" class="btn btn-primary">
               登録
             </button>

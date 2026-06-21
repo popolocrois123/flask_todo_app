@@ -24,7 +24,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for todo in todos[1:] %}
+                        {% for todo in todos %}
                             <tr>
                                 <td>
                                     {% for s in State %}
@@ -39,8 +39,14 @@
                                 </td>
                                 <td>{{ todo.task }}</td>
                                 <td>{{ todo.detail or "" }}</td>
-                                <td>{{ todo.limit or "" }}</td>
-                                <td>{{ todo.state.label }}</td>
+                                <td>{{ todo.limit or "" }}</td>   
+                                <td>
+                                    {% if not todo.done %}
+                                        未完了
+                                    {% else %}
+                                        完了
+                                    {% endif %}
+                                </td>
                                 <td>
                                     <a href="{{ url_for('edit_todo', id=todo.id) }}">編集</a>
                                 </td>

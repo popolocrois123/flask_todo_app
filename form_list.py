@@ -31,7 +31,7 @@ class State(enum.Enum):
         return {
             "TODO": "未着手",
             "DOING": "作業中",
-            # "DONE": "完了"
+            "DONE": "完了"
         }[self.value]
 
 
@@ -94,6 +94,12 @@ class Todo_info(db.Model):
             # タスクの内容を更新
             todo.task = request.form.get("todo")
             todo.detail = request.form.get("todo_detail")
+            finish = request.form.get("radio")
+            if finish == "0":
+                todo.done = False
+            else:
+                todo.done = True
+
             todo.limit = limit_date
             todo.state = State(request.form.get(f"select_state_{todo_id}"))  if None else "TODO"
             print(f"上書き保存check")

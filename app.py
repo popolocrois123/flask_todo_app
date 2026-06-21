@@ -75,59 +75,26 @@ with app.app_context():
 # 空のtodoリスト
 todos = []
 
-@app.route("/regist", methods=["GET", "POST"])
+@app.route("/regist", methods=["GET"])
 def regist():
     form = Todo_Form()
-    
-    # POSTか同化の確認とセキュリティ
-    if form.validate_on_submit():
-        # print("validate通過")
-        # Todo_info.add_todo(request, session)
-
-        return redirect(url_for("index"))
-
-    else:
-        print("新規登録画面に移行")
 
     return render_template("regist.html", form=form)
 
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/", methods=["GET"])
 def index():
-    # form = Todo_Form()
-    # todos = Todo_info.query.all()
-    # # デバッグ
-    # print(f"todosの件数： {len(todos)}")
-    # return render_template("index.html", form=form, todos=todos, State=State)
-
+    
     form = Todo_Form()
-    
-    # 【デバッグ】どんなリクエストが来たか確認
-    print(f"--- リクエストメソッド: {request.method} ---")
-    
-    if request.method == "POST":
-        print("--- POSTリクエストを感知しました ---")
-        
-        if form.validate_on_submit():
-            print("--- フォームのバリデーション成功！ add_todoを実行します ---")
-            Todo_info.add_todo(request, db.session)
-            return redirect(url_for("index"))
-        else:
-            # もしフォームの入力値に問題（エラー）があればここを通る
-            print("--- フォームのバリデーションに失敗しました ---")
-            print(f"フォームのエラー内容: {form.errors}") # ← 何が原因で弾かれたか出力
 
-    # データ取得
-    todos = Todo_info.query.all()
-    # print(todos) # ← 取得したデータを確認
-    # print(db.engine.url)
+    # データベースからデータ一式を取得する
+    todos = Todo_info.query.filter_by(done=False).all()
     return render_template("index.html", form=form, todos=todos, State=State)
 
 
 @app.route("/todo_main", methods=["GET", "POST"])
 def see_todo():
     form = Todo_Form()
-    todos = Todo_info.query.all()
 
     if form.validate_on_submit():
         Todo_info.add_todo(request, db.session)
@@ -139,9 +106,8 @@ def see_todo():
     
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
 def edit_todo(id):
-    print(f"id:{id}")
     form = Todo_Form()
-    # todos = session.query(TODO_DB).all()
+    # 選択したtodo_idを取得して、編集画面
     # フォームの値をデータベースの値で表示
     todo = Todo_info.query.get(id)
     form.todo.id = id
@@ -149,11 +115,7 @@ def edit_todo(id):
     form.todo_detail.data = todo.detail
     form.limit_date.data = todo.limit
 
-
-
-    logger.info(f"{request.method} /edit 編集画面")
-
-    return render_template("regist.html", form=form, id=id)
+    return render_template("regist.html", form=form)
 
 
 
@@ -172,4 +134,4 @@ def complete_todo(id):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5006)
+    app.run(debug=True, port=5000)
